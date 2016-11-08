@@ -1,8 +1,8 @@
-function send(booking){
-    var api_key = 'key-67b86d7ad8fdbd8b29156d4d246a5731';
-    var domain = 'sandboxa20b47392fdb41d18b3629e330882f57.mailgun.org';
-    var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+var api_key = 'key-67b86d7ad8fdbd8b29156d4d246a5731';
+var domain = 'sandboxa20b47392fdb41d18b3629e330882f57.mailgun.org';
+var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 
+function send(booking){
     var data = {
         from: 'BlushPH <blushphilippines@gmail.com>',
         to: booking.artistInfo.email,

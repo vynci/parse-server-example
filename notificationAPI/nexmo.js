@@ -1,6 +1,6 @@
-function send(booking){
-    var Nexmo = require('../node_modules/nexmo/lib/Nexmo');
+var Nexmo = require('../node_modules/nexmo/lib/Nexmo');
 
+function send(booking){    
     var nexmo = new Nexmo({
         apiKey: '2c909569', 
         apiSecret: '80c3b6a1fed15b33'
