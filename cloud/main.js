@@ -22,6 +22,7 @@ Parse.Cloud.define('request-reset', function(req, res) {
       });
     },
     error: function(error) {
+      res.error({result: "user and email not found."});
       console.log(error);
     }
   });

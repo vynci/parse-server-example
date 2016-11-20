@@ -27,7 +27,7 @@ function resetPasswordRequest(customerInfo){
     to: customerInfo.email,
     subject: 'BlushPH - Forgot Password',
     text: 'Hi,\n\nClick on the link to reset password: ' + token + ' ' + id,
-    html: '<a href="https://muse-rest-api.herokuapp.com/reset-password?id=' + id +'&token=' + token + '"><b> Reset Password Now </b></a>'
+    html: 'Hi,<br><br>Click<a href="https://muse-rest-api.herokuapp.com/reset-password?id=' + id +'&token=' + token + '"><b> HERE </b></a> to reset your password. This will redirect you to a page where you can view your new generated password.'
   };
 
   mailgun.messages().send(data, function (error, body) {
