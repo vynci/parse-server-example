@@ -15,14 +15,18 @@ Parse.Cloud.define('request-reset', function(req, res) {
   user.find({
     success: function(results) {
       console.log(results[0].id);
-      res.success({result: 'success'});
-      mailgun.resetPasswordRequest({
-        userId : results[0].id,
-        email: req.params.email
-      });
+      if(results.length){
+        res.success({result: 'success'});
+        mailgun.resetPasswordRequest({
+          userId : results[0].id,
+          email: req.params.email
+        });
+      }else{
+        res.success({result: "failed"});
+      }
     },
     error: function(error) {
-      res.error({result: "user and email not found."});
+      res.error({result: "something went wrong"});
       console.log(error);
     }
   });
