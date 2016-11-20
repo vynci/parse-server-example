@@ -2,21 +2,42 @@ Parse.Cloud.define('hello', function(req, res) {
   res.success('Hi');
 });
 
+Parse.Cloud.define('request-reset', function(req, res) {
+  Parse.initialize("myAppId", "myAppId", "myMasterKey");
+  Parse.serverURL = 'http://localhost:1337/parse';
+  Parse.Cloud.useMasterKey();
+  
+  var User = Parse.Object.extend("User");
+  var user = new Parse.Query(User);
+
+  user.equalTo("username", req.params.email);
+  user.find({
+    success: function(results) {
+      console.log(results)
+      res.success('Hi');
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+
+});
+
 Parse.Cloud.afterSave("Booking", function(request) {
     console.log(request.object.attributes);
     var booking = request.object.attributes;
     var nexmo = require('../notificationAPI/nexmo.js');
     var mailgun = require('../notificationAPI/mailgun.js');
     var pubnub = require('../notificationAPI/pubnub.js');
-    
+
     if(booking.artistInfo.contactNumber){
-        nexmo.send(booking);          
+        nexmo.send(booking);
     }
 
     if(booking.artistInfo.email){
-        mailgun.send(booking);                    
+        mailgun.send(booking);
     }
-    
+
     if(booking.artistInfo.id){
         var channel = 'book/' + booking.artistInfo.id;
         var payload = {
@@ -26,8 +47,8 @@ Parse.Cloud.afterSave("Booking", function(request) {
                 avatar : booking.customerInfo.avatar
             },
             date: new Date()
-        }        
-        pubnub.publish(channel, payload);    
+        }
+        pubnub.publish(channel, payload);
     }
 });
 
@@ -45,7 +66,7 @@ Parse.Cloud.afterSave("Message", function(request) {
                 avatar : booking.customerInfo.avatar
             },
             date: new Date()
-        }        
-        pubnub.publish(channel, payload);    
+        }
+        pubnub.publish(channel, payload);
     }
 });

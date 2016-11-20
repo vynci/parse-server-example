@@ -12,11 +12,25 @@ function send(booking){
 
     mailgun.messages().send(data, function (error, body) {
         console.log(body);
-    });    
+    });
+}
+
+function resetPasswordRequest(customerInfo){
+  var id = customerInfo.userId;
+  var token;
+
+  var data = {
+    from: 'BlushPH <blushphilippines@gmail.com>',
+    to: customerInfo.email,
+    subject: 'BlushPH - Forgot Password ' + customerInfo.firstName + ' ' + customerInfo.lastName,
+    text: 'Hi ' + booking.artistInfo.firstName +',\n\nClick on the link to reset password: '
+  };
+
+  mailgun.messages().send(data, function (error, body) {
+    console.log(body);
+  });
 }
 
 module.exports = {
     send : send
 }
-
-  
