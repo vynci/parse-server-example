@@ -43,7 +43,7 @@ app.get('/reset-password', function(req, res) {
 
     if(timeDiff < 900000){
       Parse.initialize("myAppId", "myAppId", "myMasterKey");
-      Parse.serverURL = 'http://localhost:1337/parse';
+      Parse.serverURL = 'https://muse-rest-api.herokuapp.com/parse';
       Parse.Cloud.useMasterKey();
 
       var User = Parse.Object.extend("User");
@@ -58,7 +58,7 @@ app.get('/reset-password', function(req, res) {
           results[0].save(null, {
             success: function(result) {
               // Execute any logic that should take place after the object is saved.
-              res.json({ message: 'success', result: newPassword});
+              res.status(200).send('Reset Password Successful. This is your new password: <b>' + newPassword + '</b>.');
             },
             error: function(gameScore, error) {
               console.log('error');

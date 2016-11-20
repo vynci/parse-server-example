@@ -4,17 +4,22 @@ Parse.Cloud.define('hello', function(req, res) {
 
 Parse.Cloud.define('request-reset', function(req, res) {
   Parse.initialize("myAppId", "myAppId", "myMasterKey");
-  Parse.serverURL = 'http://localhost:1337/parse';
+  Parse.serverURL = 'https://muse-rest-api.herokuapp.com/parse';
   Parse.Cloud.useMasterKey();
-  
+
+  var mailgun = require('../notificationAPI/mailgun.js');
   var User = Parse.Object.extend("User");
   var user = new Parse.Query(User);
 
   user.equalTo("username", req.params.email);
   user.find({
     success: function(results) {
-      console.log(results)
-      res.success('Hi');
+      console.log(results[0].id);
+      res.success({result: 'success'});
+      mailgun.resetPasswordRequest({
+        userId : results[0].id,
+        email: req.params.email
+      });
     },
     error: function(error) {
       console.log(error);
