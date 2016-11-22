@@ -33,6 +33,29 @@ Parse.Cloud.define('request-reset', function(req, res) {
 
 });
 
+Parse.Cloud.define('quick-booking', function(req, res) {
+  Parse.initialize("myAppId", "myAppId", "myMasterKey");
+  Parse.serverURL = 'https://muse-rest-api.herokuapp.com/parse';
+  Parse.Cloud.useMasterKey();
+
+  var ArtistObject = Parse.Object.extend("Artist");
+  var query = new Parse.Query(ArtistObject);
+
+  query.equalTo("coordinates", req.params.coordinates);
+
+  query.limit(5);
+
+  query.find({
+    success: function(results) {
+      console.log(results[0].id);
+      res.success({result: results[0]});
+    },
+    error: function(error) {
+      res.error({result: "something went wrong"});
+    }
+  });
+});
+
 Parse.Cloud.afterSave("Booking", function(request) {
     console.log(request.object.attributes);
     var booking = request.object.attributes;
