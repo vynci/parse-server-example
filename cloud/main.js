@@ -57,37 +57,41 @@ Parse.Cloud.define('quick-booking', function(req, res) {
 });
 
 Parse.Cloud.afterSave("Booking", function(request) {
-  console.log(request.object.attributes);
+  console.log('existed: ', request.object.existed());
+
   var booking = request.object.attributes;
   var nexmo = require('../notificationAPI/nexmo.js');
   var mailgun = require('../notificationAPI/mailgun.js');
   var pubnub = require('../notificationAPI/pubnub.js');
 
-  if(booking.artistInfo.contactNumber){
-    nexmo.send(booking);
-  }
-
-  if(booking.artistInfo.email){
-    mailgun.send(booking);
-  }
-
-  if(booking.artistInfo.id){
-    var channel = 'book/' + booking.artistInfo.id;
-    var payload = {
-      content: request.object,
-      sender: {
-        name: booking.customerInfo.firstName + ' ' + booking.customerInfo.lastName,
-        avatar : booking.customerInfo.avatar
-      },
-      date: new Date()
+  if(!request.object.existed()){
+    if(booking.artistInfo.contactNumber){
+      nexmo.send(booking);
     }
-    pubnub.publish(channel, payload);
+
+    if(booking.artistInfo.email){
+      mailgun.send(booking);
+    }
+
+    if(booking.artistInfo.id){
+      var channel = 'book/' + booking.artistInfo.id;
+      var payload = {
+        content: request.object,
+        sender: {
+          name: booking.customerInfo.firstName + ' ' + booking.customerInfo.lastName,
+          avatar : booking.customerInfo.avatar
+        },
+        date: new Date()
+      }
+      pubnub.publish(channel, payload);
+    }    
   }
 });
 
 Parse.Cloud.afterSave("Thread", function(request) {
   var thread = request.object.attributes;
   var pubnub = require('../notificationAPI/pubnub.js');
+
   if(thread.messageFrom === 'customer'){
     if(thread.artistInfo){
       var channel = 'message/' + thread.artistInfo.id;
