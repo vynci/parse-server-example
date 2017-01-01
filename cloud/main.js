@@ -57,49 +57,74 @@ Parse.Cloud.define('quick-booking', function(req, res) {
 });
 
 Parse.Cloud.afterSave("Booking", function(request) {
-    console.log(request.object.attributes);
-    var booking = request.object.attributes;
-    var nexmo = require('../notificationAPI/nexmo.js');
-    var mailgun = require('../notificationAPI/mailgun.js');
-    var pubnub = require('../notificationAPI/pubnub.js');
+  console.log(request.object.attributes);
+  var booking = request.object.attributes;
+  var nexmo = require('../notificationAPI/nexmo.js');
+  var mailgun = require('../notificationAPI/mailgun.js');
+  var pubnub = require('../notificationAPI/pubnub.js');
 
-    if(booking.artistInfo.contactNumber){
-        nexmo.send(booking);
-    }
+  if(booking.artistInfo.contactNumber){
+    nexmo.send(booking);
+  }
 
-    if(booking.artistInfo.email){
-        mailgun.send(booking);
-    }
+  if(booking.artistInfo.email){
+    mailgun.send(booking);
+  }
 
-    if(booking.artistInfo.id){
-        var channel = 'book/' + booking.artistInfo.id;
-        var payload = {
-            content: request.object,
-            sender: {
-                name: booking.customerInfo.firstName + ' ' + booking.customerInfo.lastName,
-                avatar : booking.customerInfo.avatar
-            },
-            date: new Date()
-        }
-        pubnub.publish(channel, payload);
+  if(booking.artistInfo.id){
+    var channel = 'book/' + booking.artistInfo.id;
+    var payload = {
+      content: request.object,
+      sender: {
+        name: booking.customerInfo.firstName + ' ' + booking.customerInfo.lastName,
+        avatar : booking.customerInfo.avatar
+      },
+      date: new Date()
     }
+    pubnub.publish(channel, payload);
+  }
 });
 
-Parse.Cloud.afterSave("Message", function(request) {
-    console.log(request.object.attributes);
-    var message = request.object.attributes;
-    var pubnub = require('../notificationAPI/pubnub.js');
-
-    if(booking.artistInfo.id){
-        var channel = 'message/' + message.artistId;
-        var payload = {
-            content: request.object,
-            sender: {
-                name: booking.customerInfo.firstName + ' ' + booking.customerInfo.lastName,
-                avatar : booking.customerInfo.avatar
-            },
-            date: new Date()
-        }
-        pubnub.publish(channel, payload);
+Parse.Cloud.afterSave("Thread", function(request) {
+  var thread = request.object.attributes;
+  var pubnub = require('../notificationAPI/pubnub.js');
+  if(thread.messageFrom === 'customer'){
+    if(thread.artistInfo){
+      var channel = 'message/' + thread.artistInfo.id;
+      var payload = {
+        content: {
+          threadId : request.object.id,
+          message : thread.lastMessage,
+          userId : thread.customerInfo.id,
+          createdDate : ''
+        },
+        sender: {
+          name: thread.customerInfo.firstName + ' ' + thread.customerInfo.lastName,
+          avatar : thread.customerInfo.avatar
+        },
+        date: new Date()
+      }
+      pubnub.publish(channel, payload);
     }
+  } else {
+    if(thread.customerInfo){
+      var channel = 'message/' + thread.customerInfo.id;
+      var payload = {
+        content: {
+          threadId : request.object.id,
+          message : thread.lastMessage,
+          userId : thread.artistInfo.id,
+          createdDate : ''
+        },
+        sender: {
+          name: thread.artistInfo.firstName + ' ' + thread.artistInfo.lastName,
+          avatar : thread.artistInfo.avatar
+        },
+        date: new Date()
+      }
+      pubnub.publish(channel, payload);
+    }
+  }
+
+
 });
