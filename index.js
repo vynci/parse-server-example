@@ -19,6 +19,7 @@ var api = new ParseServer({
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
   appId: process.env.APP_ID || 'myAppId',
   restAPIKey: process.env.REST_API_KEY || 'myRestAPIKey',
+  javascriptKey : process.env.JAVASCRIPT_KEY || 'myJavascriptKey',
   masterKey: process.env.MASTER_KEY || '', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',  // Don't forget to change to https if needed
   liveQuery: {
