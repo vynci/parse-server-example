@@ -33,6 +33,10 @@ Parse.Cloud.define('request-reset', function(req, res) {
 
 });
 
+Parse.Cloud.define('request-register', function(req, res) {
+    res.success({result: 'success'});
+});
+
 Parse.Cloud.define('quick-booking', function(req, res) {
   Parse.initialize("myAppId", "myAppId", "myMasterKey");
   Parse.serverURL = 'https://muse-rest-api.herokuapp.com/parse';
@@ -84,7 +88,7 @@ Parse.Cloud.afterSave("Booking", function(request) {
         date: new Date()
       }
       pubnub.publish(channel, payload);
-    }    
+    }
   }
 });
 
