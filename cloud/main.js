@@ -34,7 +34,10 @@ Parse.Cloud.define('request-reset', function(req, res) {
 });
 
 Parse.Cloud.define('request-register', function(req, res) {
-    res.success({result: 'success'});
+  var mailgun = require('../notificationAPI/mailgun.js');
+
+  mailgun.sendRegistrationRequest(req.params);
+  res.success({result: 'success'});
 });
 
 Parse.Cloud.define('quick-booking', function(req, res) {
