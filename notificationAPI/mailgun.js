@@ -21,12 +21,14 @@ function send(booking){
 function sendRegistrationRequest(form){
   console.log(form);
 
+  var email = form.emailAddress || form.email;
+
   var data = {
     from: 'BlushPH <blushphilippines@gmail.com>',
     to: 'zagatekph@gmail.com, phoebejaneelizaga@gmail.com, jhoiee888@gmail.com',
     subject: 'New Registration Request From ' + form.firstName + ' ' + form.lastName,
     text: 'Hi Admin, ',
-    html: '<b>New Registration Request: </b> <br><br>First Name: ' + form.firstName + '<br>Last Name: ' + form.lastName + '<br>Primary Address: ' + form.primaryAddress + '<br>Secondary Address: ' + form.secondaryAddress + '<br>Years of Experience: ' + form.yearsOfExperience + '<br>Email Address: ' + form.emailAddress +  '<br>Contact Number: ' + form.contactNumber + '<br>Social Media: ' + form.socialMedia + '<br>Personal Website: ' + form.personalWebsite + '<br>Certification: ' + form.certification + '<br>About Yourself: ' + form.aboutYourself
+    html: '<b>New Registration Request: </b> <br><br>First Name: ' + form.firstName + '<br>Last Name: ' + form.lastName + '<br>Primary Address: ' + form.primaryAddress + '<br>Secondary Address: ' + form.secondaryAddress + '<br>Years of Experience: ' + form.yearsOfExperience + '<br>Email Address: ' + email +  '<br>Contact Number: ' + form.contactNumber + '<br>Social Media: ' + form.socialMedia + '<br>Personal Website: ' + form.personalWebsite + '<br>Certification: ' + form.certification + '<br>About Yourself: ' + form.aboutYourself
   };
 
   mailgun.messages().send(data, function (error, body) {
